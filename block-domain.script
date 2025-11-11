@@ -1,0 +1,106 @@
+# Скрипт для блокировки доменов через DNS в MikroTik RouterOS 7.17
+# Автор: MikroTik Domain Blocker
+# Версия: 1.0
+
+:log info "Начало обновления списка блокировки доменов"
+
+# URL списка доменов для блокировки
+:local urlDomains "https://raw.githubusercontent.com/kocmomah/mikrotik-scalable/refs/heads/main/block-domain.txt"
+
+# IP-адрес для редиректа заблокированных доменов
+# Варианты:
+# - Локальный IP роутера (например 192.168.88.1) - редирект на веб-страницу блокировки
+# - 127.0.0.1 - localhost
+# - Любой другой валидный IP
+:local blockIP "127.0.0.1"
+
+# Комментарий для идентификации записей
+:local commentTag "auto-block-list"
+
+# Удаляем старые записи с нашим комментарием
+:log info "Удаление старых записей блокировки..."
+/ip dns static remove [find comment=$commentTag]
+
+# Скачиваем список доменов
+:log info "Скачивание списка доменов..."
+:local fileName "block-domains.txt"
+
+:do {
+    /tool fetch url=$urlDomains mode=https dst-path=$fileName
+    :log info "Список доменов успешно скачан"
+} on-error={
+    :log error "Ошибка при скачивании списка доменов"
+    :error "Не удалось скачать список"
+}
+
+# Небольшая задержка для завершения скачивания
+:delay 2s
+
+# Читаем файл и добавляем домены
+:log info "Добавление доменов в статический DNS..."
+:local fileContent [/file get $fileName contents]
+:local lineEnd 0
+:local line ""
+:local lineBegin 0
+:local domainCount 0
+
+# Парсим файл построчно
+:while ($lineEnd < [:len $fileContent]) do={
+    :set lineEnd [:find $fileContent "\n" $lineBegin]
+    
+    :if ([:len $lineEnd] = 0) do={
+        :set lineEnd [:len $fileContent]
+    }
+    
+    :set line [:pick $fileContent $lineBegin $lineEnd]
+    :set lineBegin ($lineEnd + 1)
+    
+    # Убираем пробелы и лишние символы
+    :local domain $line
+    
+    # Убираем возврат каретки если есть
+    :if ([:find $domain "\r"] >= 0) do={
+        :set domain [:pick $domain 0 [:find $domain "\r"]]
+    }
+    
+    # Убираем пробелы в начале и конце
+    :while ([:pick $domain 0 1] = " ") do={
+        :set domain [:pick $domain 1 [:len $domain]]
+    }
+    :while ([:pick $domain ([:len $domain] - 1)] = " ") do={
+        :set domain [:pick $domain 0 ([:len $domain] - 1)]
+    }
+    
+    # Проверяем, что строка не пустая и не комментарий
+    :if ([:len $domain] > 0) do={
+        :if ([:pick $domain 0 1] != "#" && [:pick $domain 0 1] != ";") do={
+            # Проверяем на валидность домена (содержит точку и не содержит пробелов)
+            :if ([:find $domain "."] >= 0 && [:find $domain " "] < 0) do={
+                # Проверяем, не существует ли уже такая запись
+                :local existingRecord [/ip dns static find name=$domain]
+                :if ([:len $existingRecord] = 0) do={
+                    # Добавляем домен в статический DNS
+                    :do {
+                        /ip dns static add name=$domain address=$blockIP comment=$commentTag ttl=1d
+                        :set domainCount ($domainCount + 1)
+                        :if (($domainCount % 100) = 0) do={
+                            :log info "Добавлено доменов: $domainCount"
+                        }
+                    } on-error={
+                        :log warning "Не удалось добавить домен: $domain"
+                    }
+                } else={
+                    :log debug "Домен уже существует: $domain"
+                }
+            } else={
+                :log debug "Невалидный домен пропущен: $domain"
+            }
+        }
+    }
+}
+
+# Удаляем временный файл
+/file remove $fileName
+
+:log info "Обновление завершено. Добавлено доменов: $domainCount"
+:put "Блокировка доменов обновлена. Всего заблокировано: $domainCount доменов"
