@@ -1,4 +1,8 @@
 vk.com
+vk.ru
+vkontakte.ru
+vk.me
+vk.cc
 facebook.com
 instagram.com
 twitter.com
@@ -14,3 +18,4 @@ yandex.ru
 dzen.ru
 youtube.com
 youtu.be
+rutracker.org
