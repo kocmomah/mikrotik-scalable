@@ -1,4 +1,3 @@
-# === МЕССЕНДЖЕРЫ ===
 telegram.org
 www.telegram.org
 web.telegram.org
@@ -42,8 +41,6 @@ messenger.com
 facebook.com
 www.facebook.com
 fb.com
-
-# === СОЦИАЛЬНЫЕ СЕТИ ===
 vk.com
 www.vk.com
 m.vk.com
@@ -111,8 +108,6 @@ twitch.tv
 www.twitch.tv
 periscope.tv
 www.periscope.tv
-
-# === ЗНАКОМСТВА И АНОНИМНЫЕ ЧАТЫ ===
 tinder.com
 www.tinder.com
 badoo.com
@@ -133,8 +128,6 @@ date.ru
 www.date.ru
 flirtplay.ru
 www.flirtplay.ru
-
-# === ФОРУМЫ, БЛОГИ, КОНТЕНТ ===
 livejournal.com
 www.livejournal.com
 blogspot.com
@@ -163,8 +156,6 @@ lostfilm.tv
 kinogo.by
 baskino.com
 rezka.ag
-
-# === РАЗНЫЕ ПЛОЩАДКИ ДЛЯ ОБЩЕНИЯ ===
 avito.ru
 www.avito.ru
 m.avito.ru
@@ -179,8 +170,6 @@ rabota.ru
 superjob.ru
 career.habr.com
 jobs.dou.ua
-
-# === СТРИМИНГОВЫЕ / ВИДЕО ПЛАТФОРМЫ ===
 twitch.tv
 www.twitch.tv
 kick.com
@@ -191,8 +180,6 @@ trovo.live
 www.trovo.live
 goodgame.ru
 www.goodgame.ru
-
-# === ДОПОЛНИТЕЛЬНО ===
 zoom.us
 www.zoom.us
 meet.google.com
