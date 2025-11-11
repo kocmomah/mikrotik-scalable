@@ -1,0 +1,96 @@
+# Скрипт для блокировки доменов через Firewall Address List в MikroTik RouterOS 7.17
+# Автор: MikroTik Domain Blocker (Firewall version)
+# Версия: 1.0
+
+:log info "Начало обновления списка блокировки доменов (Address List)"
+
+# URL списка доменов для блокировки
+:local urlDomains "https://raw.githubusercontent.com/kocmomah/mikrotik-scalable/refs/heads/main/block-domain.txt"
+
+# Имя Address List
+:local listName "blocked-domains"
+
+# Комментарий для идентификации записей
+:local commentTag "auto-block-list"
+
+# Удаляем старые записи с нашим комментарием из Address List
+:log info "Удаление старых записей блокировки из Address List..."
+/ip firewall address-list remove [find list=$listName comment=$commentTag]
+
+# Скачиваем список доменов
+:log info "Скачивание списка доменов..."
+:local fileName "block-domains.txt"
+
+:do {
+    /tool fetch url=$urlDomains mode=https dst-path=$fileName
+    :log info "Список доменов успешно скачан"
+} on-error={
+    :log error "Ошибка при скачивании списка доменов"
+    :error "Не удалось скачать список"
+}
+
+# Небольшая задержка для завершения скачивания
+:delay 2s
+
+# Читаем файл и добавляем домены
+:log info "Добавление доменов в Address List..."
+:local fileContent [/file get $fileName contents]
+:local lineEnd 0
+:local line ""
+:local lineBegin 0
+:local domainCount 0
+
+# Парсим файл построчно
+:while ($lineEnd < [:len $fileContent]) do={
+    :set lineEnd [:find $fileContent "\n" $lineBegin]
+    
+    :if ([:len $lineEnd] = 0) do={
+        :set lineEnd [:len $fileContent]
+    }
+    
+    :set line [:pick $fileContent $lineBegin $lineEnd]
+    :set lineBegin ($lineEnd + 1)
+    
+    # Убираем пробелы и лишние символы
+    :local domain $line
+    
+    # Убираем возврат каретки если есть
+    :if ([:find $domain "\r"] >= 0) do={
+        :set domain [:pick $domain 0 [:find $domain "\r"]]
+    }
+    
+    # Убираем пробелы в начале и конце
+    :while ([:pick $domain 0 1] = " ") do={
+        :set domain [:pick $domain 1 [:len $domain]]
+    }
+    :while ([:pick $domain ([:len $domain] - 1)] = " ") do={
+        :set domain [:pick $domain 0 ([:len $domain] - 1)]
+    }
+    
+    # Проверяем, что строка не пустая и не комментарий
+    :if ([:len $domain] > 0) do={
+        :if ([:pick $domain 0 1] != "#" && [:pick $domain 0 1] != ";") do={
+            # Проверяем на валидность домена (содержит точку и не содержит пробелов)
+            :if ([:find $domain "."] >= 0 && [:find $domain " "] < 0) do={
+                # Добавляем домен в Address List
+                :do {
+                    /ip firewall address-list add list=$listName address=$domain comment=$commentTag timeout=1d
+                    :set domainCount ($domainCount + 1)
+                    :if (($domainCount % 100) = 0) do={
+                        :log info "Добавлено доменов: $domainCount"
+                    }
+                } on-error={
+                    :log warning "Не удалось добавить домен: $domain"
+                }
+            } else={
+                :log debug "Невалидный домен пропущен: $domain"
+            }
+        }
+    }
+}
+
+# Удаляем временный файл
+/file remove $fileName
+
+:log info "Обновление завершено. Добавлено доменов: $domainCount"
+:put "Address List '$listName' обновлён. Всего заблокировано: $domainCount доменов"
