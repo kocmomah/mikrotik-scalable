@@ -1,4 +1,5 @@
 telegram.org
+web.telegram.org
 t.me
 telegra.ph
 whatsapp.com
