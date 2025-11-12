@@ -1,0 +1,17 @@
+dns.google
+doh.opendns.com
+doh.cleanbrowsing.org
+chrome.cloudflare-dns.com
+dns.adguard-dns.com
+dns.alidns.com
+dns.quad9.net
+dns.comss.one
+dns.yandex.ru
+dns.cloudflare.com
+doh.libredns.gr
+doh.appliedprivacy.net
+doh.dns.sb
+dns.nextdns.io
+doh.pub
+doh.360.cn
+one.one.one.one
