@@ -17,3 +17,4 @@ skype.com
 messenger.live.com
 max.im
 max.ru
+web.max.ru
