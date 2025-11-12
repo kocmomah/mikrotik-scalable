@@ -15,7 +15,6 @@ reddit.com
 discord.com
 ok.ru
 my.mail.ru
-yandex.ru
 dzen.ru
 youtube.com
 youtu.be
