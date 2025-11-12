@@ -3,6 +3,7 @@ vk.ru
 vkontakte.ru
 vk.me
 vk.cc
+api.vk.com
 facebook.com
 instagram.com
 twitter.com
