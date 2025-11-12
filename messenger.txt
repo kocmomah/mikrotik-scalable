@@ -1,3 +1,4 @@
+dns.google
 doh.opendns.com
 doh.cleanbrowsing.org
 chrome.cloudflare-dns.com
