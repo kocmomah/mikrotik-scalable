@@ -1,6 +1,5 @@
 doh.opendns.com
 doh.cleanbrowsing.org
-cloudflare-dns.com
 chrome.cloudflare-dns.com
 telegram.org
 t.me
