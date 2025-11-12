@@ -2,6 +2,7 @@ telegram.org
 t.me
 telegra.ph
 whatsapp.com
+web.whatsapp.com
 signal.org
 viber.com
 line.me
