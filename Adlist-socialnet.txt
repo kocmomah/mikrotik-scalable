@@ -19,6 +19,7 @@ youtube.com
 youtu.be
 rutracker.org
 avito.ru
+www.avito.ru
 ozon.ru
 wildberries.ru
 hh.ru
