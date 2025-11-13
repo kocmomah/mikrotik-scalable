@@ -16,6 +16,7 @@ discord.com
 ok.ru
 my.mail.ru
 youtube.com
+www.youtube.com
 youtu.be
 rutracker.org
 avito.ru
